@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import Loader from "@/components/ui/Loader";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -18,19 +19,13 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // Show nothing while checking authentication
+  // Show loader while checking auth state from localStorage
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <Loader size="lg" className="min-h-screen" aria-label="Checking authentication..." />;
   }
 
-  // If not authenticated, don't render children (will redirect)
-  if (!isAuthenticated) {
-    return null;
-  }
+  // Not authenticated — return null while redirect happens
+  if (!isAuthenticated) return null;
 
   return <>{children}</>;
 }

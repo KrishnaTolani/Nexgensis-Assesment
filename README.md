@@ -166,7 +166,19 @@ Nexgensis-Assesment/   ← repo root (this is the project root)
 - [x] Button and Badge reusable UI components
 - [x] Login page: auto-fill button for demo credentials
 
-### Phase 11-13: Coming Soon
+### Phase 11: QA & Accessibility ✅
+- [x] Retry button now actually re-triggers the fetch (fixed stale closure issue)
+- [x] Delete errors surface in the UI instead of silent console.error
+- [x] `aria-live` region announces search result changes to screen readers
+- [x] `role="status"` on Loader with sr-only text
+- [x] `aria-label` on search input
+- [x] `scope="col"` on all table headers
+- [x] `focus-visible` keyboard ring in globals.css
+- [x] `sr-only` utility class in globals.css
+- [x] `line-clamp-2` utility in globals.css
+- [x] ProtectedRoute uses Loader component instead of inline spinner
+
+### Phase 12-13: Coming Soon
 
 ## API Information
 

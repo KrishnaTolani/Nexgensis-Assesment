@@ -28,6 +28,8 @@ function ProductsContent() {
   // Delete modal state
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  // Retry counter — incrementing this forces the fetch useEffect to re-run
+  const [retryCount, setRetryCount] = useState(0);
 
   const debouncedSearch = useDebounce(searchInput, 500);
 
@@ -116,7 +118,7 @@ function ProductsContent() {
     return () => {
       abortControllerRef.current?.abort();
     };
-  }, [page, limit, search, category, sortBy, sortOrder]);
+  }, [page, limit, search, category, sortBy, sortOrder, retryCount]);
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
 
@@ -136,7 +138,7 @@ function ProductsContent() {
     updateParams({ search: "", category: "", sortBy: "", sortOrder: "asc", page: 1 });
   };
 
-  const handleRetry = () => updateParams({ page });
+  const handleRetry = () => setRetryCount((c) => c + 1);
 
   // Open delete confirmation modal
   const handleDeleteClick = (product: Product) => setDeleteTarget(product);
@@ -158,8 +160,10 @@ function ProductsContent() {
       setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
       setTotal((prev) => prev - 1);
       setDeleteTarget(null);
-    } catch (err) {
-      console.error("Failed to delete product:", err);
+    } catch (err: any) {
+      // Show error in the page if delete fails
+      setError("Failed to delete product. Please try again.");
+      setDeleteTarget(null);
     } finally {
       setIsDeleting(false);
     }
@@ -208,7 +212,13 @@ function ProductsContent() {
         </div>
 
         {/* Loading */}
-        {isLoading && <Loader className="py-12" />}
+        {isLoading && <Loader className="py-12" aria-label="Loading products" />}
+
+        {/* Screen reader status */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {!isLoading && !error && `Showing ${products.length} of ${total} products`}
+          {error && error}
+        </div>
 
         {/* Error */}
         {error && !isLoading && (
