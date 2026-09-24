@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Product Admin Dashboard
+
+A Next.js admin dashboard for managing products using the DummyJSON API.
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **HTTP Client**: Axios
+- **Utilities**: clsx, tailwind-merge
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ installed
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd product-admin-dashboard
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Environment setup:
+Create a `.env.local` file in the root (already included):
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://dummyjson.com
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+### Build for Production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+product-admin-dashboard/
+├── app/                    # Next.js App Router pages
+├── components/            
+│   ├── ui/                # Reusable UI components
+│   ├── auth/              # Authentication components
+│   ├── products/          # Product-related components
+│   └── layout/            # Layout components
+├── lib/                   # Shared utilities and Axios setup
+├── services/              # API service layer
+├── types/                 # TypeScript type definitions
+├── hooks/                 # Custom React hooks
+├── context/               # React Context providers
+└── public/                # Static assets
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Features Checklist
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Phase 1: Setup ✅
+- [x] Next.js project with TypeScript
+- [x] Tailwind CSS configuration
+- [x] Project folder structure
+- [x] Environment variables
+- [x] Dependencies installed
+
+### Phase 2-13: Coming Soon
+- [ ] Authentication system
+- [ ] Product list with pagination
+- [ ] Search functionality
+- [ ] Filter and sort
+- [ ] Product details page
+- [ ] Add/Edit/Delete products
+- [ ] Loading and error states
+
+## API Information
+
+This project uses the free [DummyJSON API](https://dummyjson.com):
+- **Base URL**: https://dummyjson.com
+- **Auth**: Username: `emilys`, Password: `emilyspass`
+
+## Development Notes
+
+- All commits will be made incrementally per feature
+- No single large commit
+- Each phase is documented and testable
+
+## License
+
+This is an assignment project for Nexgensis.
+
+---
+
+**Status**: Phase 1 Complete - Initial Setup ✅
