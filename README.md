@@ -95,7 +95,22 @@ product-admin-dashboard/
 - [x] Root layout wrapped with AuthProvider
 - [x] Home page redirects based on auth status
 
-### Phase 4-13: Coming Soon
+### Phase 4: Product List Page ✅
+- [x] Product Service with all CRUD operations
+- [x] Get products with pagination, search, category filter
+- [x] useDebounce hook (500ms delay for search)
+- [x] useURLParams hook (manage page, limit, search, category, sort in URL)
+- [x] Product list page with full logic:
+  - Fetch products from API
+  - Search with debounce
+  - Filter by category
+  - Sort by price, rating, title (client-side)
+  - Pagination (previous/next)
+  - Loading, error, empty states
+  - Race condition prevention (AbortController)
+- [x] API limitation handling (search clears category filter)
+
+### Phase 5-13: Coming Soon
 - [ ] Authentication system
 - [ ] Product list with pagination
 - [ ] Search functionality
