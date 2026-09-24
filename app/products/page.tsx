@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
+import Link from "next/link";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import SearchBar from "@/components/products/SearchBar";
 import FilterSort from "@/components/products/FilterSort";
 import Pagination from "@/components/products/Pagination";
+import ProductTable from "@/components/products/ProductTable";
+import ProductCard from "@/components/products/ProductCard";
 import Loader from "@/components/ui/Loader";
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import EmptyState from "@/components/ui/EmptyState";
+import Modal from "@/components/ui/Modal";
 import productService from "@/services/product.service";
 import { Product, ProductsResponse } from "@/types/product.types";
 import { useURLParams } from "@/hooks/useURLParams";
@@ -21,22 +25,27 @@ function ProductsContent() {
   const [categories, setCategories] = useState<string[]>([]);
   const [searchInput, setSearchInput] = useState("");
 
+  // Delete modal state
+  const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const debouncedSearch = useDebounce(searchInput, 500);
 
-  const { params, updateParams } = useURLParams(1); // initial totalPages=1, recalculated below
+  const { params, updateParams } = useURLParams(1);
   const { page, limit, search, category, sortBy, sortOrder } = params;
 
   const totalPages = Math.max(1, Math.ceil(total / limit));
+  const skip = (page - 1) * limit;
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Sync input with URL on mount only
+  // Sync search input with URL on mount only
   useEffect(() => {
     setSearchInput(search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // When debounced search changes, update URL
+  // When debounced search changes update URL — reset to page 1 and clear category
   useEffect(() => {
     if (debouncedSearch !== search) {
       updateParams({ search: debouncedSearch, page: 1, category: "" });
@@ -44,13 +53,14 @@ function ProductsContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch]);
 
-  // Fetch categories once
+  // Fetch categories once on mount
   useEffect(() => {
     productService.getCategories().then(setCategories).catch(console.error);
   }, []);
 
-  // Fetch products on param change
+  // Fetch products whenever URL params change
   useEffect(() => {
+    // Cancel any in-flight request (race condition prevention)
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -61,7 +71,6 @@ function ProductsContent() {
 
     const fetchProducts = async () => {
       try {
-        const skip = (page - 1) * limit;
         const response: ProductsResponse = await productService.getProducts({
           limit,
           skip,
@@ -69,7 +78,7 @@ function ProductsContent() {
           category,
         });
 
-        // Client-side sort
+        // Client-side sort (API doesn't support sorting natively)
         let sorted = [...response.products];
         if (sortBy) {
           sorted.sort((a, b) => {
@@ -87,7 +96,7 @@ function ProductsContent() {
         setProducts(sorted);
         setTotal(response.total);
       } catch (err: any) {
-        if (err.code === "ERR_CANCELED") return;
+        if (err.code === "ERR_CANCELED") return; // Aborted — not a real error
         setError("Failed to load products. Please try again.");
       } finally {
         setIsLoading(false);
@@ -101,9 +110,9 @@ function ProductsContent() {
     };
   }, [page, limit, search, category, sortBy, sortOrder]);
 
-  const handleSearchChange = (value: string) => {
-    setSearchInput(value);
-  };
+  // ─── Handlers ───────────────────────────────────────────────────────────────
+
+  const handleSearchChange = (value: string) => setSearchInput(value);
 
   const handleCategoryChange = (value: string) => {
     setSearchInput("");
@@ -119,11 +128,35 @@ function ProductsContent() {
     updateParams({ search: "", category: "", sortBy: "", sortOrder: "asc", page: 1 });
   };
 
-  const handleRetry = () => {
-    updateParams({ page });
+  const handleRetry = () => updateParams({ page });
+
+  // Open delete confirmation modal
+  const handleDeleteClick = (product: Product) => setDeleteTarget(product);
+
+  // Cancel delete
+  const handleDeleteCancel = () => {
+    if (!isDeleting) setDeleteTarget(null);
   };
 
-  const skip = (page - 1) * limit;
+  // Confirm delete
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+
+    try {
+      await productService.deleteProduct(deleteTarget.id);
+      // Optimistic update: remove from local state immediately
+      // (API doesn't really persist the delete, but we show it in the UI)
+      setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setTotal((prev) => prev - 1);
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error("Failed to delete product:", err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const hasActiveFilters = !!(search || category || sortBy);
 
   return (
@@ -135,7 +168,7 @@ function ProductsContent() {
             <h1 className="text-3xl font-bold text-gray-900">Products</h1>
             <p className="text-gray-600 mt-1">Manage your product inventory</p>
           </div>
-          <a
+          <Link
             href="/products/add"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -143,7 +176,7 @@ function ProductsContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Add Product
-          </a>
+          </Link>
         </div>
 
         {/* Search & Filters */}
@@ -183,22 +216,17 @@ function ProductsContent() {
           />
         )}
 
-        {/* Product List placeholder */}
+        {/* Product List */}
         {!isLoading && !error && products.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            {/* Placeholder – table/cards come in Phase 6 */}
-            <div className="p-6 space-y-2">
-              {products.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex items-center gap-4 p-3 border border-gray-100 rounded-lg"
-                >
-                  <img src={p.thumbnail} alt={p.title} className="h-12 w-12 object-cover rounded" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{p.title}</p>
-                    <p className="text-sm text-gray-500">{p.category}</p>
-                  </div>
-                  <p className="font-semibold text-gray-900">${p.price}</p>
+            {/* Desktop: Table */}
+            <ProductTable products={products} onDelete={handleDeleteClick} />
+
+            {/* Mobile: Cards */}
+            <div className="md:hidden divide-y divide-gray-100">
+              {products.map((product) => (
+                <div key={product.id} className="p-4">
+                  <ProductCard product={product} onDelete={handleDeleteClick} />
                 </div>
               ))}
             </div>
@@ -215,6 +243,19 @@ function ProductsContent() {
             />
           </div>
         )}
+
+        {/* Delete Confirmation Modal */}
+        <Modal
+          isOpen={!!deleteTarget}
+          title="Delete Product"
+          message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
+          onConfirm={handleDeleteConfirm}
+          onCancel={handleDeleteCancel}
+          isDestructive={true}
+          isLoading={isDeleting}
+        />
       </div>
     </ProtectedRoute>
   );
