@@ -77,7 +77,14 @@ product-admin-dashboard/
 - [x] Environment variables
 - [x] Dependencies installed
 
-### Phase 2-13: Coming Soon
+### Phase 2: Core Infrastructure ✅
+- [x] Axios instance with request/response interceptors
+- [x] Auto-attach auth token to every request
+- [x] Centralized 401/404/500 error handling
+- [x] TypeScript types for Auth and Products
+- [x] Utility functions (format, validate URL params, pagination)
+
+### Phase 3-13: Coming Soon
 - [ ] Authentication system
 - [ ] Product list with pagination
 - [ ] Search functionality
