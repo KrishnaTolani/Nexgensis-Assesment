@@ -136,8 +136,19 @@ export default function LoginPage() {
           {/* Demo Credentials */}
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials:</p>
-            <p className="text-sm text-blue-700">Username: <code className="bg-white px-2 py-0.5 rounded">emilys</code></p>
-            <p className="text-sm text-blue-700">Password: <code className="bg-white px-2 py-0.5 rounded">emilyspass</code></p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-blue-700">Username: <code className="bg-white px-2 py-0.5 rounded">emilys</code></p>
+                <p className="text-sm text-blue-700">Password: <code className="bg-white px-2 py-0.5 rounded">emilyspass</code></p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setUsername("emilys"); setPassword("emilyspass"); setError(""); }}
+                className="text-xs text-blue-700 underline hover:no-underline"
+              >
+                Auto-fill
+              </button>
+            </div>
           </div>
         </div>
       </div>

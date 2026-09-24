@@ -157,7 +157,16 @@ Nexgensis-Assesment/   ← repo root (this is the project root)
 - [x] useURLParams refactored: cleaner validation, uses pathname for proper URL building
 - [x] Product service: added AbortSignal support, clarified API limitation comments
 
-### Phase 10-13: Coming Soon
+### Phase 10: Layout & Final Wiring ✅
+- [x] Header upgraded: sticky, logo with icon, desktop nav links with active states
+- [x] Mobile hamburger menu with nav links and logout
+- [x] Root layout improved with proper min-height calc
+- [x] Dynamic page title template (`%s | Product Admin`)
+- [x] Global 404 not-found page
+- [x] Button and Badge reusable UI components
+- [x] Login page: auto-fill button for demo credentials
+
+### Phase 11-13: Coming Soon
 
 ## API Information
 
