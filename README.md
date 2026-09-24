@@ -133,7 +133,21 @@ Nexgensis-Assesment/   ← repo root (this is the project root)
 - [x] Error state with Retry button
 - [x] Edit Product button linking to edit page
 
-### Phase 8-13: Coming Soon
+### Phase 8: Add & Edit Product ✅
+- [x] ProductForm component (shared for add and edit)
+- [x] Validation: title (min 3 chars), description (min 10), price (>0), stock (≥0, integer), category (required), thumbnail (valid URL)
+- [x] Inline field error messages
+- [x] Category dropdown populated from API
+- [x] Thumbnail URL preview
+- [x] Prevent multiple submissions (button disabled during request)
+- [x] API note banner (explains data won't persist)
+- [x] Add Product page at `/products/add`
+- [x] Edit Product page at `/products/edit/[id]`
+- [x] Edit page pre-fills form with existing product data
+- [x] Handles invalid/missing product ID on edit page
+- [x] Redirects to product list (add) or product detail (edit) on success
+
+### Phase 9-13: Coming Soon
 
 ## API Information
 
