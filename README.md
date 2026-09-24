@@ -120,12 +120,20 @@ Nexgensis-Assesment/   ← repo root (this is the project root)
 - [x] Loader, ErrorMessage (with Retry), EmptyState, Modal UI components
 - [x] Products page updated to use all new components
 
-### Phase 6-13: Coming Soon
-- [ ] Product table (desktop) and cards (mobile)
-- [ ] Product details page
-- [ ] Add/Edit product forms with validation
-- [ ] Delete product with confirmation
-- [ ] Deployment to Vercel
+### Phase 7: Product Details Page ✅
+- [x] Product detail page at `/products/[id]`
+- [x] Image gallery with thumbnail strip (click to switch main image)
+- [x] Product info: title, brand, category, price, discount, rating, description
+- [x] Key details grid: stock, SKU, weight, min order quantity
+- [x] Shipping, warranty, return policy info
+- [x] Tags display
+- [x] Customer reviews with star ratings and dates
+- [x] "Not Found" page for invalid or missing product IDs
+- [x] Validates non-numeric IDs (e.g. `/products/abc`) → shows not-found
+- [x] Error state with Retry button
+- [x] Edit Product button linking to edit page
+
+### Phase 8-13: Coming Soon
 
 ## API Information
 
