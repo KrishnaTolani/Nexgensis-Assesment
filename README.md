@@ -21,8 +21,8 @@ A Next.js admin dashboard for managing products using the DummyJSON API.
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
-cd product-admin-dashboard
+git clone https://github.com/KrishnaTolani/Nexgensis-Assesment.git
+cd Nexgensis-Assesment
 ```
 
 2. Install dependencies:
@@ -53,7 +53,7 @@ npm start
 ## Project Structure
 
 ```
-product-admin-dashboard/
+Nexgensis-Assesment/   ← repo root (this is the project root)
 ├── app/                    # Next.js App Router pages
 ├── components/            
 │   ├── ui/                # Reusable UI components
@@ -121,13 +121,11 @@ product-admin-dashboard/
 - [x] Products page updated to use all new components
 
 ### Phase 6-13: Coming Soon
-- [ ] Authentication system
-- [ ] Product list with pagination
-- [ ] Search functionality
-- [ ] Filter and sort
+- [ ] Product table (desktop) and cards (mobile)
 - [ ] Product details page
-- [ ] Add/Edit/Delete products
-- [ ] Loading and error states
+- [ ] Add/Edit product forms with validation
+- [ ] Delete product with confirmation
+- [ ] Deployment to Vercel
 
 ## API Information
 
@@ -147,4 +145,4 @@ This is an assignment project for Nexgensis.
 
 ---
 
-**Status**: Phase 1 Complete - Initial Setup ✅
+**Status**: Phase 5 Complete - Search, Filter, Pagination UI ✅
