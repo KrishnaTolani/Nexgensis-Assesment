@@ -13,7 +13,7 @@ import ErrorMessage from "@/components/ui/ErrorMessage";
 import EmptyState from "@/components/ui/EmptyState";
 import Modal from "@/components/ui/Modal";
 import productService from "@/services/product.service";
-import { Product, ProductsResponse } from "@/types/product.types";
+import { Product, ProductsResponse, Category } from "@/types/product.types";
 import { useURLParams } from "@/hooks/useURLParams";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -22,7 +22,7 @@ function ProductsContent() {
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [searchInput, setSearchInput] = useState("");
 
   // Delete modal state
@@ -31,7 +31,7 @@ function ProductsContent() {
 
   const debouncedSearch = useDebounce(searchInput, 500);
 
-  const { params, updateParams } = useURLParams(1);
+  const { params, updateParams } = useURLParams();
   const { page, limit, search, category, sortBy, sortOrder } = params;
 
   const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -76,6 +76,7 @@ function ProductsContent() {
           skip,
           search,
           category,
+          signal: abortControllerRef.current?.signal,
         });
 
         // Client-side sort (API doesn't support sorting natively)
@@ -95,6 +96,13 @@ function ProductsContent() {
 
         setProducts(sorted);
         setTotal(response.total);
+
+        // Clamp out-of-range page numbers AFTER we know the real total
+        // e.g. ?page=999 with only 20 pages → redirect to last page
+        const realTotalPages = Math.max(1, Math.ceil(response.total / limit));
+        if (page > realTotalPages) {
+          updateParams({ page: realTotalPages });
+        }
       } catch (err: any) {
         if (err.code === "ERR_CANCELED") return; // Aborted — not a real error
         setError("Failed to load products. Please try again.");

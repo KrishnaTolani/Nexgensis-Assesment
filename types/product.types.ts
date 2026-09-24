@@ -52,6 +52,13 @@ export interface ProductsResponse {
   limit: number;
 }
 
+// Category object returned by /products/categories
+export interface Category {
+  slug: string;
+  name: string;
+  url: string;
+}
+
 // For add/edit form — only the fields we let the user fill in
 export interface ProductFormData {
   title: string;

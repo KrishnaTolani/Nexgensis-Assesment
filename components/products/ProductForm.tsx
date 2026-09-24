@@ -2,7 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ProductFormData } from "@/types/product.types";
+import { ProductFormData, Category } from "@/types/product.types";
 import productService from "@/services/product.service";
 
 interface ProductFormProps {
@@ -38,7 +38,7 @@ export default function ProductForm({ mode, productId, initialData, onSuccess }:
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   // Fetch categories for the dropdown
   useEffect(() => {
@@ -249,8 +249,8 @@ export default function ProductForm({ mode, productId, initialData, onSuccess }:
           >
             <option value="">Select a category</option>
             {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              <option key={cat.slug} value={cat.slug}>
+                {cat.name}
               </option>
             ))}
           </select>

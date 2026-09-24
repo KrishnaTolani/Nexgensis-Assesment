@@ -147,7 +147,17 @@ Nexgensis-Assesment/   ← repo root (this is the project root)
 - [x] Handles invalid/missing product ID on edit page
 - [x] Redirects to product list (add) or product detail (edit) on success
 
-### Phase 9-13: Coming Soon
+### Phase 9: Edge Cases & Refinements ✅
+- [x] Fixed categories API — now returns `{slug, name, url}` objects, not plain strings
+- [x] AbortSignal passed directly into service calls (race condition prevention tested with &delay=2000)
+- [x] Out-of-range page numbers (?page=9999) → clamped to last valid page after data loads
+- [x] Invalid page strings (?page=abc) → silently default to page 1
+- [x] Invalid limit values (?limit=7) → default to 10
+- [x] Invalid sortBy values → ignored, no sort applied
+- [x] useURLParams refactored: cleaner validation, uses pathname for proper URL building
+- [x] Product service: added AbortSignal support, clarified API limitation comments
+
+### Phase 10-13: Coming Soon
 
 ## API Information
 

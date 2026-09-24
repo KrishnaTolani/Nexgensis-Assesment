@@ -1,42 +1,48 @@
 import axiosInstance from "@/lib/axios";
-import { Product, ProductsResponse, ProductFormData } from "@/types/product.types";
+import { Product, ProductsResponse, ProductFormData, Category } from "@/types/product.types";
 
 class ProductService {
   // GET /products with pagination, search, and filtering
+  // NOTE: DummyJSON cannot search AND filter by category simultaneously.
+  // Decision: search takes priority — when search is active, category is ignored.
   async getProducts(params: {
     limit?: number;
     skip?: number;
     search?: string;
     category?: string;
+    signal?: AbortSignal;
   }): Promise<ProductsResponse> {
-    const { limit = 10, skip = 0, search, category } = params;
+    const { limit = 10, skip = 0, search, category, signal } = params;
 
-    // If search is provided, use search endpoint
+    // Search takes priority over category filter
     if (search && search.trim()) {
       const response = await axiosInstance.get<ProductsResponse>(
-        `/products/search?q=${encodeURIComponent(search)}&limit=${limit}&skip=${skip}`
+        `/products/search?q=${encodeURIComponent(search.trim())}&limit=${limit}&skip=${skip}`,
+        { signal }
       );
       return response.data;
     }
 
-    // If category is provided (and no search), use category endpoint
+    // Category filter (no search active)
     if (category && category.trim()) {
       const response = await axiosInstance.get<ProductsResponse>(
-        `/products/category/${encodeURIComponent(category)}?limit=${limit}&skip=${skip}`
+        `/products/category/${encodeURIComponent(category)}?limit=${limit}&skip=${skip}`,
+        { signal }
       );
       return response.data;
     }
 
-    // Default: get all products
+    // Default: all products
     const response = await axiosInstance.get<ProductsResponse>(
-      `/products?limit=${limit}&skip=${skip}`
+      `/products?limit=${limit}&skip=${skip}`,
+      { signal }
     );
     return response.data;
   }
 
-  // GET /products/categories
-  async getCategories(): Promise<string[]> {
-    const response = await axiosInstance.get<string[]>("/products/categories");
+  // GET /products/categories — returns array of {slug, name, url}
+  async getCategories(): Promise<Category[]> {
+    const response = await axiosInstance.get<Category[]>("/products/categories");
     return response.data;
   }
 
@@ -47,18 +53,21 @@ class ProductService {
   }
 
   // POST /products/add
+  // NOTE: DummyJSON does not persist this — it returns a fake response with a new id
   async addProduct(data: ProductFormData): Promise<Product> {
     const response = await axiosInstance.post<Product>("/products/add", data);
     return response.data;
   }
 
   // PUT /products/:id
-  async updateProduct(id: number, data: ProductFormData): Promise<Product> {
+  // NOTE: DummyJSON does not persist this — returns the updated product object
+  async updateProduct(id: number, data: Partial<ProductFormData>): Promise<Product> {
     const response = await axiosInstance.put<Product>(`/products/${id}`, data);
     return response.data;
   }
 
   // DELETE /products/:id
+  // NOTE: DummyJSON does not persist this — returns {id, isDeleted, deletedOn}
   async deleteProduct(id: number): Promise<{ id: number; isDeleted: boolean }> {
     const response = await axiosInstance.delete<{ id: number; isDeleted: boolean }>(
       `/products/${id}`
